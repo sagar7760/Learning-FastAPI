@@ -1,13 +1,19 @@
-/.env
-/main.cpython-312.pyc
-/__pycache__/
-/*.pyc
+# Environment files
+/env_files/.env
+# Ignore environment files
+
+# Python cache
+__pycache__/
+*.pyc
 *.pyo
 *.pyd
 .Python
-env/
-venv/
-ENV/
+
+# Virtual environments
+.env/
+
+
+# Build and distribution
 build/
 develop-eggs/
 dist/
@@ -22,3 +28,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# IDE
+.vscode/
+.idea/

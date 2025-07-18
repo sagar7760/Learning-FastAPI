@@ -7,32 +7,32 @@ from typing import List
 
 router = APIRouter()
 
+class UserCreation(BaseModel):
+    email: str
+    name: str
+    password: str
 
-class userCraation(BaseModel):
-    email:str
-    name:str
-    password:str
+class UserResponse(UserCreation):
+    id: int
+    
+    class Config:
+        from_attributes = True
 
-class userResponse(userCraation):
-    id:int
-
-
-router.get("/", response_model=List[userResponse])
+@router.get("/", response_model=List[UserResponse])
 def get_users(db: Session = Depends(get_db)):
-    users=db.query(User).all()
+    users = db.query(User).all()
     return users
 
-
-router.post("/", response_model=userResponse)
-def create_user(user: userCraation, db: Session = Depends(get_db)):
-    db_user=user(email=user.email, name=user.name, password=user.password)
+@router.post("/", response_model=UserResponse)
+def create_user(user: UserCreation, db: Session = Depends(get_db)):
+    db_user = User(email=user.email, name=user.name, password=user.password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-router.put("/{email}", response_model=userResponse)
-def upadate_user(email: str, user: userCraation, db: Session = Depends(get_db)):
+@router.put("/{email}", response_model=UserResponse)
+def update_user(email: str, user: UserCreation, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == email).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -42,7 +42,7 @@ def upadate_user(email: str, user: userCraation, db: Session = Depends(get_db)):
     db.refresh(db_user)
     return db_user
 
-router.delete("/{email}")
+@router.delete("/{email}")
 def delete_user(email: str, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == email).first()
     if not db_user:
